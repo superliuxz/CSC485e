@@ -40,13 +40,12 @@ def load_corpus(corpus_dir, filelist):
 
 	return tmp
 
-def word_ng(corpus, mean_norm, rec, **kwargs):
+def word_ng(corpus, mean_norm, **kwargs):
 	'''
 	compute word based ngram model
 
 	:param corpus: a list of all the corpuses. each element of the list corresponds to one corpus.
 	:param mean_norm: a boolean enables mean normalization.
-	:param rec: a boolean enables  recurrence counting.
 	:param kwargs: keyword arguments to be passed into CountVectorizer().
 	:return: feature matrix and the vectorizer.
 	'''
@@ -67,60 +66,64 @@ def word_ng(corpus, mean_norm, rec, **kwargs):
 	#tmp = preprocessing.normalize(tmp)
 
 	## a parallel implementation of recurrence word ngram
-	if rec:
-		nproc = 12
+	# if rec:
+	# 	#print("start of //")
+	# 	nproc = 10
 
-		csc = csc_matrix(tmp)
-		l = csc.shape[1]
+	# 	csc = csc_matrix(tmp)
+	# 	l = csc.shape[1]
 
-		curr = 0
-		chunk_size = l // nproc
-		q = mp.Manager().Queue()
-		procs = []
-		for i in range(nproc):
-			args = (csc, curr, (lambda: curr + chunk_size if curr + chunk_size <= l else l)(), q)
-			curr += chunk_size
-			p = mp.Process(target = recurrence, args = args)
-			p.start()
-			procs.append(p)
+	# 	curr = 0
+	# 	chunk_size = l // nproc
+	# 	q = mp.Manager().Queue()
+	# 	procs = []
+	# 	for i in range(nproc):
+	# 		args = (csc, curr, (lambda: curr + chunk_size if curr + chunk_size <= l else l)(), q)
+	# 		curr += chunk_size
+	# 		p = mp.Process(target = recurrence, args = args)
+	# 		p.start()
+	# 		procs.append(p)
 
-		for proc in procs:
-			proc.join()
+	# 	for proc in procs:
+	# 		proc.join()
+	# 	#print("start of +")
+	# 	z = q.get()
+	# 	while not q.empty():
+	# 		z = np.add(z, q.get())
 
-		z = q.get()
-		while not q.empty():
-			z += q.get()
+	# 	#print("end of +\nend of //\nstart of dot")	
+	# 	tmp = np.dot(csc, z.T)
+	# 	#print("end of dot")
 
-		tmp = csc * z.T
 
 	return tmp, vectorizer
 
 ## to be called in each process
-def recurrence(sparse_matrix, i, j, q):
-	'''
-	couting the recurrence of word ngram, and generating a dia-sparse matrix
+# def recurrence(sparse_matrix, i, j, q):
+# 	'''
+# 	couting the recurrence of word ngram, and generating a dia-sparse matrix
 
-	:param sparse_matrix: original sparse ngram feature matrix
-	:param i: start index
-	:param j: end index
-	:param q: Queue
-	:return:
-	'''
-	pid = mp.current_process().name
-	print(pid, "start")
+# 	:param sparse_matrix: original sparse ngram feature matrix
+# 	:param i: start index
+# 	:param j: end index
+# 	:param q: Queue
+# 	:return:
+# 	'''
+# 	pid = mp.current_process().name
+# 	#print(pid, "start")
 
-	l = sparse_matrix.shape[1]
-	z = lil_matrix((l, l))
-	try:
-		for x in range(i, j):
-			if sparse_matrix[:, x].count_nonzero() > 1:
-				z[x, x] = 1
-	except:
-		pass
-	finally:
-		q.put(z)
+# 	l = sparse_matrix.shape[1]
+# 	z = lil_matrix((l, l))
+# 	try:
+# 		for x in range(i, j):
+# 			if sparse_matrix[:, x].count_nonzero() > 1:
+# 				z[x, x] = 1
+# 	except:
+# 		pass
+# 	finally:
+# 		q.put(z)
 
-	print(pid, "finish")
+# 	#print(pid, "finish")
 
 def precision(pred, label):
 	'''

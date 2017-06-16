@@ -13,14 +13,16 @@ def word_ngram():
 
 	for i in range(1, 4):
 		for n in range(6 - i):
-			training_features, vectorizer = nu.word_ng(training_corpus, False, True, ngram_range = (n+1, n+i), dtype = np.float64, stop_words = None, binary = False)
+			training_features, vectorizer = nu.word_ng(training_corpus, False, ngram_range = (n+1, n+i), stop_words = stopwords, binary = True, min_df = 2)
 
 			pred_features = vectorizer.transform(pred_corpus)
 
 			clf = LinearSVC()
+			#print("start of fit")
 			clf.fit(training_features, training_labels)
+			#print("end of fit\nstart of pred")
 			prediction = clf.predict(pred_features)
-
+			#print("end of pred")
 			print(nu.precision(prediction, pred_labels))
 
 if __name__ == "__main__":
