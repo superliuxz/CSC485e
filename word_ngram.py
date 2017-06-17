@@ -1,6 +1,7 @@
 import numpy as np
 import nli_util as nu
 from sklearn.svm import LinearSVC
+from sklearn.linear_model import LogisticRegression
 
 def word_ngram():
 	stopwords = nu.load_stopwds("stopwords.txt")
@@ -12,12 +13,14 @@ def word_ngram():
 	pred_corpus = nu.load_corpus("data/essays/dev/original", pred_filelist)
 
 	for i in range(1, 4):
-		for n in range(6 - i):
-			training_features, vectorizer = nu.word_ng(training_corpus, False, ngram_range = (n+1, n+i), stop_words = stopwords, binary = True, min_df = 2)
+		for n in range(4 - i):
+			print(n+1, n+i)
+			training_features, vectorizer = nu.word_ng(training_corpus, False, ngram_range = (n+1, n+i), stop_words = None, binary = True, min_df = 1)
 
 			pred_features = vectorizer.transform(pred_corpus)
 
-			clf = LinearSVC()
+			#clf = LinearSVC()
+			clf = LogisticRegression(n_jobs = -1)
 			#print("start of fit")
 			clf.fit(training_features, training_labels)
 			#print("end of fit\nstart of pred")
