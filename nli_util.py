@@ -49,8 +49,8 @@ def word_ng(corpus, mean_norm, **kwargs):
 	:param kwargs: keyword arguments to be passed into CountVectorizer().
 	:return: feature matrix and the vectorizer.
 	'''
-	#vectorizer = CountVectorizer(**kwargs)
-	vectorizer = TfidfVectorizer(**kwargs)
+	vectorizer = CountVectorizer(**kwargs)
+	#vectorizer = TfidfVectorizer(**kwargs)
 
 	## returns Compressed Sparse Row matrix
 	x = vectorizer.fit_transform(corpus)
@@ -125,20 +125,35 @@ def word_ng(corpus, mean_norm, **kwargs):
 
 # 	#print(pid, "finish")
 
-def precision(pred, label):
-	'''
-	return the precision of prediction
-	:param pred: an array of prediction
-	:param label: an array of labels
-	:return: precision
-	'''
-	assert(len(pred) == len(label))
+# def precision(pred, label):
+# 	'''
+# 	return the precision of prediction
+# 	:param pred: an array of prediction
+# 	:param label: an array of labels
+# 	:return: precision
+# 	'''
+# 	assert(len(pred) == len(label))
 
-	l = len(pred)
+# 	l = len(pred)
 
-	tp = 0
-	for i in range(l):
-		if pred[i] == label[i]:
-			tp += 1
+# 	tp = 0
+# 	for i in range(l):
+# 		if pred[i] == label[i]:
+# 			tp += 1
 
-	return tp / l
+# 	return tp / l
+
+def ngram_range(i, j, l):
+	x = range(i, j + 1)
+	tmp = []
+	for _ in range(l + 1):
+		for __ in range(len(x)):
+				try:
+					a = x[__]
+					b = x[__ + _ - 1]
+					if a <= b:
+						tmp.append((a,b))
+				except:
+					pass
+
+	return tmp[1:]	

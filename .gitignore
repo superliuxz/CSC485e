@@ -6,3 +6,4 @@ scripts/
 stopwords.txt
 .DS_Store
 .idea/
+output*
