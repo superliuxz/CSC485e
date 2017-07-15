@@ -21,7 +21,7 @@ def load_labels(label):
 	'''
 	tmp = genfromtxt(label, delimiter = ",", dtype = str)
 
-	return [_[0] for _ in tmp[1:]], np.array([_[3] for _ in tmp[1:]])
+	return [_[0] for _ in tmp[1:]], np.array([_[-1] for _ in tmp[1:]])
 
 def load_corpus(corpus_dir, filelist):
 	'''
@@ -49,8 +49,8 @@ def word_ng(corpus, mean_norm, **kwargs):
 	:param kwargs: keyword arguments to be passed into CountVectorizer().
 	:return: feature matrix and the vectorizer.
 	'''
-	vectorizer = CountVectorizer(**kwargs)
-	#vectorizer = TfidfVectorizer(**kwargs)
+	#vectorizer = CountVectorizer(**kwargs)
+	vectorizer = TfidfVectorizer(**kwargs)
 
 	## returns Compressed Sparse Row matrix
 	x = vectorizer.fit_transform(corpus)
