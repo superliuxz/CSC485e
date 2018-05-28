@@ -1,7 +1,6 @@
 README
 data/
 __pycache__
-requirements.txt
 scripts/
 stopwords.txt
 .DS_Store

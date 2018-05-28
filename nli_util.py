@@ -3,7 +3,7 @@ from numpy import genfromtxt
 import numpy as np
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from scipy.sparse import csc_matrix, lil_matrix
+from scipy.sparse import csc_matrix, lil_matrix, hstack
 import multiprocessing as mp
 
 def load_stopwds(filename):
@@ -36,7 +36,14 @@ def load_corpus(corpus_dir, filelist):
 
 	for f in filelist:
 		with open(os.path.join(corpus_dir, f + ".txt"), "r") as fin:
-			tmp.append(fin.read())
+			
+			try:
+				x = fin.read()
+			except UnicodeDecodeError as e:
+				print(f)
+				exit(1)
+
+			tmp.append(x)
 
 	return tmp
 
@@ -157,3 +164,6 @@ def ngram_range(i, j, l):
 					pass
 
 	return tmp[1:]	
+
+def concat(L, R, mul):
+	return hstack([L, R.multiply(mul)])
